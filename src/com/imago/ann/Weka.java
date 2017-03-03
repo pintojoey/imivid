@@ -8,8 +8,11 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
+<<<<<<< HEAD
 import java.util.Date;
 import java.util.HashMap;
+=======
+>>>>>>> branch 'master' of https://meghagupta0401@bitbucket.org/meghagupta0401/imago.git
 import java.util.Iterator;
 
 import com.imago.graphics.Image;
@@ -24,6 +27,7 @@ import weka.core.Instances;
 
 
 public class Weka {
+<<<<<<< HEAD
 	public static void main(String[] args) throws Exception {
 		long tStart = System.currentTimeMillis();
 		
@@ -49,14 +53,55 @@ public class Weka {
 		Instance result=classify(getTestingInstance(image1, fvWekaAttributes), mlp);
 		System.out.println("classify time"+(System.currentTimeMillis()-tStart)/100);
 		System.out.println(result.toString());
+=======
+	public static FastVector getAttributeSet(int image_size,ArrayList<String>class_names){
+		FastVector fvWekaAttributes=new FastVector(image_size+class_names.size());
+		for(int i=0;i<image_size;i++){
+			fvWekaAttributes.add("pixel_"+i);
+			
+		}
+		Iterator<String> class_iterator=class_names.iterator();
+		while(class_iterator.hasNext()){
+			fvWekaAttributes.add(class_iterator.next());
+		}
+		return fvWekaAttributes;
+>>>>>>> branch 'master' of https://meghagupta0401@bitbucket.org/meghagupta0401/imago.git
 		
+
 	}
+<<<<<<< HEAD
 	public static FastVector getAttributeSet(int image_size,ArrayList<Double>class_names){
 		FastVector fvWekaAttributes=new FastVector(image_size+class_names.size());
 		for(int i=0;i<image_size;i++){
 			
 			fvWekaAttributes.addElement(new Attribute("pixel_"+i));
+=======
+	public static Instances getTrainingSet(ArrayList<Image>images,ArrayList<String>class_names,FastVector fvWekaAttributes){
+		if(images.size()!=class_names.size())return null;
+		Iterator<Image> image_iterator = images.iterator();
+		Iterator<String>class_name_iterator=class_names.iterator();
+		while(image_iterator.hasNext()){
+			Image image=image_iterator.next();
+			String class_name=class_name_iterator.next();
+			Instance instance=getTrainingInstance(image, class_name, fvWekaAttributes);
+		}
+	}
+	public static Instance getTrainingInstance(Image image,String class_name,FastVector fvWekaAttributes){
+>>>>>>> branch 'master' of https://meghagupta0401@bitbucket.org/meghagupta0401/imago.git
 
+<<<<<<< HEAD
+=======
+		Color color[][]=image.getPixel();
+		int im_height=image.getHeight();
+		int im_width=image.getWidth();
+		Instance instance=new DenseInstance(1);
+		int count=0;
+		for (int j = 0; j < im_height; j++) {
+			for (int k = 0; k < im_width; k++) {
+				instance.setValue((Attribute)fvWekaAttributes.elementAt(count),color[j][k].getBlue());
+				count++;
+			}	
+>>>>>>> branch 'master' of https://meghagupta0401@bitbucket.org/meghagupta0401/imago.git
 		}
 		Iterator<Double> class_iterator=class_names.iterator();
 		FastVector fvClassVal = new FastVector(class_names.size());
