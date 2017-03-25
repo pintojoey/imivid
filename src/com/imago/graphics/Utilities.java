@@ -1,6 +1,7 @@
 package com.imago.graphics;
 
 import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
@@ -11,6 +12,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 
@@ -19,7 +21,7 @@ import org.apache.commons.codec.binary.Base64;
 public class Utilities {
 	public static void main(String[] args) {
 		String base64=Utilities.readFile("img_1.txt");
-		Image image=Utilities.getImage(base64,"img_1.txt");
+		Image image=Utilities.getImage(base64);
 		System.out.println(image.getHeight());
 	}
 	public static Image readImage(String image_file){
@@ -60,7 +62,8 @@ int j=0,k=0;
 	    	StringBuffer sb = new StringBuffer(); 
 	    	while((read = br.readLine()) != null ) { 
 	    	
-	    		sb.append(read+"\n");} 
+	    	//sb.append(read+"\n");
+	    		} 
 	    	config = sb.toString();
 	        br.close();
 	    } catch(Exception e) {
@@ -106,7 +109,7 @@ int j=0,k=0;
 		return new File(location);
 		
 	}
-	public static Image getImage(String base64String,String name){
+	public static Image getImage(String base64String){
 		 
 		  
 	
@@ -203,4 +206,26 @@ int j=0,k=0;
 		}
 		return histogram;
 	}
+	
+	
+    public static BufferedImage resize(BufferedImage inputImage ,
+            int scaledWidth, int scaledHeight)
+            throws IOException {
+        // reads input image
+      //  File inputFile = new File(inputImagePath);
+        //BufferedImage inputImage = ImageIO.read(inputFile);
+ 
+        // creates output image
+        BufferedImage outputImage = new BufferedImage(scaledWidth,
+                scaledHeight, inputImage.getType());
+ 
+        // scales the input image to the output image
+        Graphics2D g2d = outputImage.createGraphics();
+        g2d.drawImage(inputImage, 0, 0, scaledWidth, scaledHeight, null);
+        g2d.dispose();
+ 
+
+        return outputImage;
+    }
+    
 }
