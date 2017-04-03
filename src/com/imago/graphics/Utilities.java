@@ -21,7 +21,7 @@ import org.apache.commons.codec.binary.Base64;
 public class Utilities {
 	public static void main(String[] args) {
 		String base64=Utilities.readFile("img_1.txt");
-		Image image=Utilities.getImage(base64);
+		Image image=Utilities.getImage(base64,"img_1");
 		System.out.println(image.getHeight());
 	}
 	public static Image readImage(String image_file){
@@ -109,7 +109,7 @@ int j=0,k=0;
 		return new File(location);
 		
 	}
-	public static Image getImage(String base64String){
+	public static Image getImage(String base64String,String filename){
 		 
 		  
 	
@@ -187,6 +187,7 @@ int j=0,k=0;
 			img.setWidth(k);
 			img.setSize(j*k);
 			img.setPixel(colors);
+			img.setName(filename);
 			return img;
 		}
 	public static HashMap<Integer, Integer> histogram_cal(Image image){

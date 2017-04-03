@@ -16,7 +16,7 @@ import org.apache.hadoop.mapreduce.lib.input.*;
 import org.apache.hadoop.mapreduce.lib.output.*;
 import org.apache.hadoop.util.*;
 
-import com.imago.ann.Weka;
+import com.imago.ann.WekaClassification;
 import com.imago.graphics.Image;
 import com.imago.graphics.Utilities;
 
@@ -44,7 +44,7 @@ public class MapReduce extends Configured implements Tool {
 		 classes.add(i);
 	 }
 	  
-	attributes=Weka.getAttributeSet(256, classes);
+	attributes=WekaClassification.getAttributeSet(256, classes);
 	  
 	  
 	  
@@ -105,11 +105,11 @@ public class MapReduce extends Configured implements Tool {
         classes.add(1.0);
         classes.add(0.0);
         
-      Instances  instances=  Weka.getTrainingSet(images, classes, attributes);
+      Instances  instances=  WekaClassification.getTrainingSet(images, classes, attributes);
       System.out.println("reached2");
   	File mlp_file =null;
       try {
-mlp_file = Weka.getMLPFile("neural", Weka.trainMLP(instances, attributes));
+mlp_file = WekaClassification.getMLPFile("neural", WekaClassification.trainMLP(instances, attributes));
 new FileUpload(mlp_file,"/imago_serialized_ann"+ line.substring(0, line.indexOf(","))+".ann").uploadToHDFS();
 
 	 System.out.println("reached3");

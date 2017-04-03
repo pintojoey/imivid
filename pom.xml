@@ -67,6 +67,16 @@
 			<artifactId>weka-stable</artifactId>
 			<version>3.8.1</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.sangupta/jopensurf -->
+		<dependency>
+			<groupId>com.sangupta</groupId>
+			<artifactId>jopensurf</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		
+
+
+
 
 	</dependencies>
 </project>

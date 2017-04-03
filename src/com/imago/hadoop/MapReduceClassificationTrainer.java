@@ -16,7 +16,7 @@ import org.apache.hadoop.mapreduce.lib.input.*;
 import org.apache.hadoop.mapreduce.lib.output.*;
 import org.apache.hadoop.util.*;
 
-import com.imago.ann.Weka;
+import com.imago.ann.WekaClassification;
 import com.imago.graphics.Image;
 import com.imago.graphics.Utilities;
 
@@ -44,7 +44,7 @@ public class MapReduceClassificationTrainer extends Configured implements Tool {
 		 classes.add(i);
 	 }
 	  
-	attributes=Weka.getAttributeSet(256, classes);
+	attributes=WekaClassification.getAttributeSet(256, classes);
 	  
 	  
 	  
@@ -101,7 +101,7 @@ public class MapReduceClassificationTrainer extends Configured implements Tool {
         classes.add(1.0);
         classes.add(0.0);
         
-      Instance  instance=  Weka.getTrainingInstance(image, Double.valueOf(String.valueOf(new Date().getTime())), attributes);
+      Instance  instance=  WekaClassification.getTrainingInstance(image, Double.valueOf(String.valueOf(new Date().getTime())), attributes);
       System.out.println("reached2");
   	File mlp_file =null;
       try {

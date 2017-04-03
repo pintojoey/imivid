@@ -7,7 +7,8 @@
 <title>Insert title here</title>
 </head>
 <body>
-<form action="rest/FileUploadService/UploadMultipleImages" method="POST"
+rest/FileUploadService/UploadMultipleImage
+<form action="searchImage" method="POST"
 		enctype="multipart/form-data">
 		<input type="file" name="files" value="Browse" multiple/><br /> 
 	

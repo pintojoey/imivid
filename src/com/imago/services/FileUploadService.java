@@ -10,22 +10,22 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.Path;
 //import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 //
-//
-import org.apache.tomcat.util.http.fileupload.FileItem;
-import org.apache.tomcat.util.http.fileupload.RequestContext;
-import org.apache.tomcat.util.http.fileupload.disk.DiskFileItemFactory;
-import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
+
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 
 
-//@Path("/FileUploadService")
+@Path("/FileUploadService")
 
 
 public class FileUploadService extends HttpServlet {
@@ -37,7 +37,7 @@ public class FileUploadService extends HttpServlet {
 	private static final int REQUEST_SIZE = 1024 * 1024 * 50; // 50MB
 
 
-//	@Path("/UploadMultipleImages")
+	@Path("/UploadMultipleImages")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
     @POST
@@ -68,7 +68,7 @@ public class FileUploadService extends HttpServlet {
 		
 		try {
 			// parses the request's content to extract file data
-			List<FileItem> formItems = upload.parseRequest((RequestContext) request);
+			List<FileItem> formItems = upload.parseRequest( request);
 			Iterator<FileItem> iter = formItems.iterator();
 			// iterates over form's fields
 			while (iter.hasNext()) {
@@ -76,14 +76,14 @@ public class FileUploadService extends HttpServlet {
 				// processes only fields that are not form fields
 				if (!item.isFormField()) {
 					String fileName = new File(item.getName()).getName();
-			/*		//String filePath=request.getServletPath().getRealPath("/")+"uploads\\";
+					String filePath=request.getRealPath("/")+"uploads/";
 					File storeFile = new File(filePath+fileName);
 					System.out.println(filePath+fileName);
 					
 					item.write(storeFile);
-					Image img=com.imago.graphics.Utilities.readImage(filePath+fileName);
-					System.out.println(img.getHeight()+" "+img.getWidth());
-					j_array.put(img.getHeight()+" "+img.getWidth());*/
+//					Image img=com.imago.graphics.Utilities.readImage(filePath+fileName);
+//					System.out.println(img.getHeight()+" "+img.getWidth());
+//					j_array.put(img.getHeight()+" "+img.getWidth());
 				}
 			}
 		} catch (Exception ex) {
