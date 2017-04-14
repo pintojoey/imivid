@@ -27,126 +27,148 @@ import weka.filters.unsupervised.attribute.Remove;
 
 
 public class WekaClustering {
+	public static ArrayList<Cluster>clusters=new ArrayList<Cluster>();
 	public static void main(String[] args) throws Exception {
-		
-		
-//		
-//		long tStart = System.currentTimeMillis();
-//		
-//
-//		
-//	
-//		ArrayList<Image>images=new ArrayList<Image>();  //Input vector
-//		Image image1 = Utilities.readImage("SampleImages/1.png");
-//		Image image2 = Utilities.readImage("SampleImages/2.png");
-//		images.add(image1);
-//		images.add(image2);
-//	
-//				
-//		System.out.println("readImages"+(System.currentTimeMillis()-tStart)/100);
-//		FastVector fvWekaAttributes = getAttributeSet(4);
-//		System.out.println("attribute set"+(System.currentTimeMillis()-tStart)/100);
-//		Instances trainingSet = getTrainingSet(images,  fvWekaAttributes);
-//		System.out.println("training set"+(System.currentTimeMillis()-tStart)/100);
-//		SelfOrganizingMap som = trainSOM(trainingSet, fvWekaAttributes);
-//		System.out.println("training time"+(System.currentTimeMillis()-tStart)/100);
-//		writeSOMFile("self_organizing_map", som);
-//		Instance result=classify(getTestingInstance(image1, fvWekaAttributes), som);
-//		System.out.println("classify time"+(System.currentTimeMillis()-tStart)/100);
-//		System.out.println(result.toString());
-		
+
+
+		//		
+		//		long tStart = System.currentTimeMillis();
+		//		
+		//
+		//		
+		//	
+		//		ArrayList<Image>images=new ArrayList<Image>();  //Input vector
+		//		Image image1 = Utilities.readImage("SampleImages/1.png");
+		//		Image image2 = Utilities.readImage("SampleImages/2.png");
+		//		images.add(image1);
+		//		images.add(image2);
+		//	
+		//				
+		//		System.out.println("readImages"+(System.currentTimeMillis()-tStart)/100);
+		//		FastVector fvWekaAttributes = getAttributeSet(4);
+		//		System.out.println("attribute set"+(System.currentTimeMillis()-tStart)/100);
+		//		Instances trainingSet = getTrainingSet(images,  fvWekaAttributes);
+		//		System.out.println("training set"+(System.currentTimeMillis()-tStart)/100);
+		//		SelfOrganizingMap som = trainSOM(trainingSet, fvWekaAttributes);
+		//		System.out.println("training time"+(System.currentTimeMillis()-tStart)/100);
+		//		writeSOMFile("self_organizing_map", som);
+		//		Instance result=classify(getTestingInstance(image1, fvWekaAttributes), som);
+		//		System.out.println("classify time"+(System.currentTimeMillis()-tStart)/100);
+		//		System.out.println(result.toString());
+
 	}
 	public static FastVector getAttributeSet(){
 		FastVector fvWekaAttributes=new FastVector();
-			
-			fvWekaAttributes.addElement(new Attribute("angle"));
-			fvWekaAttributes.addElement(new Attribute("octave"));
-			fvWekaAttributes.addElement(new Attribute("response"));
-			fvWekaAttributes.addElement(new Attribute("size"));
-			fvWekaAttributes.addElement(new Attribute("image"));
-			
-	
-		
 
-		
-	
+		fvWekaAttributes.addElement(new Attribute("angle"));
+		fvWekaAttributes.addElement(new Attribute("octave"));
+		fvWekaAttributes.addElement(new Attribute("response"));
+		fvWekaAttributes.addElement(new Attribute("size"));
+		fvWekaAttributes.addElement(new Attribute("image"));
+
+
+
+
+
 
 		return fvWekaAttributes;
 
 
 	}
 	public static Instances getTrainingSet(ArrayList<KeyPoint>keypoints,ArrayList<Long>images,FastVector fvWekaAttributes) throws Exception{
-	
+
 		if(keypoints.size()!=images.size())throw new Exception("Number of keypoints not same as labels!");
 		Iterator<KeyPoint> keypoint_iterator = keypoints.iterator();
 		Iterator<Long> image_iterator = images.iterator();
-		
+
 		Instances trainingSet = new Instances("Rel", fvWekaAttributes, keypoints.size());
-		
+
 		while(keypoint_iterator.hasNext()){
 			KeyPoint keypoint=keypoint_iterator.next();
 			Long image=image_iterator.next();
-		
+
 			Instance instance=getTrainingInstance(keypoint, image,fvWekaAttributes);
 			trainingSet.add(instance);
-			
-			
+
+
 		}
-		trainingSet.setClassIndex(4);
-	
+		//		trainingSet.setClassIndex(4);
+
 		return trainingSet;
 	}
 	public static Instances getTestingSet(ArrayList<KeyPoint>keypoints,FastVector fvWekaAttributes) throws Exception{
-		
+
 		Iterator<KeyPoint> keypoint_iterator = keypoints.iterator();
-		
+
+
 		Instances testingSet = new Instances("Rel", fvWekaAttributes, keypoints.size());
-	
-		
+
+
 		while(keypoint_iterator.hasNext()){
 			KeyPoint keypoint=keypoint_iterator.next();
-		
+
 			Instance instance=getTestingInstance(keypoint,fvWekaAttributes);
 			testingSet.add(instance);
-			
-			
+
+
 		}
 		testingSet.setClassIndex(4);
-		Remove filter = new Remove();
-		  filter.setAttributeIndices("" + (testingSet.classIndex() + 1));
-		  filter.setInputFormat(testingSet);
-		  Instances newTest = Filter.useFilter(testingSet, filter);
-		  
-		  
-	
-		return newTest;
-	}
-	public static SelfOrganizingMap trainSOM(Instances trainingSet, FastVector fvWekaAttributes) throws Exception {
-		SelfOrganizingMap som=new SelfOrganizingMap();
-		
 
-		Remove filter = new Remove();
-		  filter.setAttributeIndices("" + (trainingSet.classIndex() + 1));
-		  filter.setInputFormat(trainingSet);
-		  Instances newTrain = Filter.useFilter(trainingSet, filter);
-		  
-		  som.setHeight(2);
-		  som.setWidth(2);
-		som.buildClusterer(newTrain);
+
+
+		return testingSet;
+	}
+	public static SelfOrganizingMap trainSOM(Instances trainingSet,ArrayList<Long>images, FastVector fvWekaAttributes) throws Exception {
+		SelfOrganizingMap som=new SelfOrganizingMap();
+
+
+		//		Remove filter = new Remove();
+		//		  filter.setAttributeIndices("" + (trainingSet.classIndex() + 1));
+		//		  filter.setInputFormat(trainingSet);
+		//		  Instances newTrain = Filter.useFilter(trainingSet, filter);
+		//		  
+		som.setHeight(2);
+		som.setWidth(2);
+
+		som.buildClusterer(trainingSet);
+
+		Instances[] instances = som.getClusterInstances();
+		clusters.clear();
+
+		for(int i=0;i<instances.length;i++){
+			Cluster cluster=new Cluster();
+			cluster.name=String.valueOf(i+1);
+//			System.out.println("cluster"+cluster.name);
 		
+			Instances instance_set = instances[i];
+			for(int j=0;j<instance_set.size();j++){
+				Instance instance = instance_set.get(j);
+				
+				if(cluster.instances.containsKey(instance.toString(4))){
+					cluster.instances.put(instance.toString(4), cluster.instances.get(instance.toString(4)));
 	
+				}
+				else{
+					cluster.instances.put(instance.toString(4), 1l);
+					
+				}
+			}
+			clusters.add(cluster);
+
+		}
+
 		return som;
-		
+
 
 	}
 	public static Instance getTrainingInstance(KeyPoint keypoint,Long image,FastVector fvWekaAttributes){
 
-	Instance instance=new DenseInstance(5);	
-	instance.setValue((Attribute)fvWekaAttributes.get(0),keypoint.angle);
-	instance.setValue((Attribute)fvWekaAttributes.get(1),keypoint.octave);
-	instance.setValue((Attribute)fvWekaAttributes.get(2),keypoint.response);
-	instance.setValue((Attribute)fvWekaAttributes.get(3),keypoint.size);
-	instance.setValue((Attribute)fvWekaAttributes.get(4),image);
+		Instance instance=new DenseInstance(5);	
+		instance.setValue((Attribute)fvWekaAttributes.get(0),keypoint.angle);
+		instance.setValue((Attribute)fvWekaAttributes.get(1),keypoint.octave);
+		instance.setValue((Attribute)fvWekaAttributes.get(2),keypoint.response);
+		instance.setValue((Attribute)fvWekaAttributes.get(3),keypoint.size);
+		instance.setValue((Attribute)fvWekaAttributes.get(4),image);
 
 		return instance;
 	}
@@ -157,11 +179,15 @@ public class WekaClustering {
 		instance.setValue((Attribute)fvWekaAttributes.get(1),keypoint.octave);
 		instance.setValue((Attribute)fvWekaAttributes.get(2),keypoint.response);
 		instance.setValue((Attribute)fvWekaAttributes.get(3),keypoint.size);
-	
 
-			return instance;
+
+
+
+
+
+		return instance;
 	}
-	
+
 	public static void writeSOMFile(String file,SelfOrganizingMap som) throws Exception{
 
 		weka.core.SerializationHelper.write(file, som);
@@ -174,23 +200,36 @@ public class WekaClustering {
 		return som;
 
 	}
-	public static double classify(Instance instance,SelfOrganizingMap som) throws Exception{
+	public static String classify(Instance instance,SelfOrganizingMap som) throws Exception{
 
-		  
-		 int clsLabel = som.clusterInstance(instance);
+
+		//	 int clsLabel = som.clusterInstance(instance);
+
+
+		double[] val = som.distributionForInstance(instance);
+	
 		
-		som.getClusters();
+		int cluster=-1;
+		double max=0;
+		for(int i=0;i<val.length;i++){
 		
-			System.out.println("Number of clusters:"+som.numberOfClusters());
-			
-		System.out.println(clsLabel);
-		instance.setClassValue(clsLabel);
+			if(val[i]>max){
+				cluster=i+1;
+				max=val[i];
+				
+			}
 
 
-		return clsLabel+1;
+		}
+		
+		System.out.println(cluster);
+		return clusters.get(cluster).getMajorClass();
+
+
+
 
 	}
 
-	
+
 
 }

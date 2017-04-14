@@ -1,8 +1,12 @@
 package com.imago.opencv;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -10,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+
+import javax.imageio.ImageIO;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -34,6 +40,7 @@ import org.opencv.highgui.Highgui;
 import org.opencv.imgproc.Imgproc;
 
 import com.imago.ann.WekaClustering;
+import com.imago.graphics.Utilities;
 
 import weka.clusterers.SelfOrganizingMap;
 import weka.core.Attribute;
@@ -82,9 +89,9 @@ public class PictureClusterer {
 		System.out.println("1");
 		Instances training_instances = WekaClustering.getTrainingSet(keypoints_set,images_set, fvWekaAttributes);
 		System.out.println("2");
-		SelfOrganizingMap som = WekaClustering.trainSOM(training_instances, fvWekaAttributes);
+		SelfOrganizingMap som = WekaClustering.trainSOM(training_instances,images_set, fvWekaAttributes);
 		System.out.println("3");
-		MatOfKeyPoint queryDescriptors = feature_extract(query_image);
+//MatOfKeyPoint queryDescriptors = feature_extract(query_image);
 		System.out.println("4");
 		ArrayList<KeyPoint>keypoints=keypoint_extract(query_image);
 		System.out.println("5");
@@ -94,8 +101,9 @@ public class PictureClusterer {
 		System.out.println("7");
 		HashMap<String,Integer>set=new HashMap<String,Integer>();
 		while(instance_iterator.hasNext()){
-			System.out.println("reached1");
-			String class_label="Fruits//img_"+String.valueOf((int)WekaClustering.classify(instance_iterator.next(), som)).replaceAll(" ","")+".jpg";
+			
+			String class_label="Fruits//img_"+WekaClustering.classify(instance_iterator.next(), som).trim()+".jpg";
+			System.out.println(class_label);
 			if(set.containsKey(class_label)){
 				set.put(class_label,set.get(class_label)+1);
 			}
@@ -104,6 +112,7 @@ public class PictureClusterer {
 			}
 			
 		}
+		System.out.println(set);
 	
 
 		
@@ -145,10 +154,15 @@ public class PictureClusterer {
 	}
 
 	}
-	public static MatOfKeyPoint feature_extract(String query_image){
-
+	public static MatOfKeyPoint feature_extract(String query_image) throws IOException{
+		BufferedImage inputImage=ImageIO.read(new File(query_image));
 		
-		Mat queryImage = Highgui.imread(query_image, Highgui.CV_LOAD_IMAGE_COLOR);
+		BufferedImage resized_image=Utilities.resize(inputImage, 1024, 1024);
+		 File temp = File.createTempFile("temp_"+new Date().getTime(), ".jpg");
+		 ImageIO.write(resized_image,"JPG",temp);
+		 System.out.println(resized_image.getType());
+		 
+		Mat queryImage = Highgui.imread(temp.getAbsolutePath(), Highgui.CV_LOAD_IMAGE_COLOR);
 	
 
 		MatOfKeyPoint objectKeyPoints = new MatOfKeyPoint();
@@ -168,11 +182,16 @@ public class PictureClusterer {
 		descriptorExtractor.compute(queryImage, objectKeyPoints, objectDescriptors);	
 		return objectDescriptors;
 	}
-public static ArrayList<KeyPoint> keypoint_extract(String query_image){
+public static ArrayList<KeyPoint> keypoint_extract(String query_image) throws IOException{
 
-		
-		Mat queryImage = Highgui.imread(query_image, Highgui.CV_LOAD_IMAGE_COLOR);
+	BufferedImage inputImage=ImageIO.read(new File(query_image));
 	
+	BufferedImage resized_image=Utilities.resize(inputImage, 64, 64);
+	String file_name="temp_"+new Date().getTime();
+	 File temp = File.createTempFile(file_name, ".jpg");
+	 ImageIO.write(resized_image,"JPG",temp);
+	 
+	Mat queryImage = Highgui.imread(temp.getAbsolutePath(), Highgui.CV_LOAD_IMAGE_COLOR);
 
 		MatOfKeyPoint objectKeyPoints = new MatOfKeyPoint();
 		FeatureDetector featureDetector = FeatureDetector.create(FeatureDetector.SURF);
