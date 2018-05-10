@@ -35,7 +35,7 @@ import com.imago.opencv.PictureClusterer;
 @WebServlet("/searchImage")
 public class SearchImage extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private static final String UPLOAD_DIRECTORY = "/uploads";
+	private static final String UPLOAD_DIRECTORY = "uploads";
 	private static final int THRESHOLD_SIZE = 1024 * 1024 * 3; // 3MB
 	private static final int MAX_FILE_SIZE = 1024 * 1024 * 10; // 10MB
 	private static final int REQUEST_SIZE = 1024 * 1024 * 50; // 50MB
@@ -63,7 +63,7 @@ public class SearchImage extends HttpServlet {
 		upload.setSizeMax(REQUEST_SIZE);
 		
 		// constructs the directory path to store upload file
-		String uploadPath = request.getRealPath(UPLOAD_DIRECTORY);
+		String uploadPath = request.getRealPath("/"+UPLOAD_DIRECTORY);
 		// creates the directory if it does not exist
 		File uploadDir = new File(uploadPath);
 		if (!uploadDir.exists()) {
@@ -85,7 +85,7 @@ public class SearchImage extends HttpServlet {
 				
 					File storeFile = new File(filePath+fileName);
 					System.out.println(filePath+fileName);
-					input_path="Fruits/"+fileName;
+					input_path=UPLOAD_DIRECTORY+"/"+fileName;
 					
 					 BufferedOutputStream output = null;
 

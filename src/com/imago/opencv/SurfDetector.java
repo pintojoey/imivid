@@ -20,8 +20,8 @@ public class SurfDetector {
 
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 
-		String query_image = "Fruits//img_2.jpg";
-		String test_image = "Fruits//img_14.jpg";
+		String query_image = "Fruits//img_1.jpg";
+		String test_image = "Fruits//img_4.jpg";
 
 		System.out.println("Started....");
 		System.out.println("Loading images...");

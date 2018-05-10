@@ -5,6 +5,7 @@ License: Creative Commons Attribution 3.0 Unported
 License URL: http://creativecommons.org/licenses/by/3.0/
 -->
 <!DOCTYPE HTML>
+<%@page import="com.imago.opencv.PictureClusterer"%>
 <html>
 <head>
 <title>Imazon</title>
@@ -72,11 +73,10 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 						</form>
 					</li>
 					<li id="options">
-						<a href="#">All Images</a>
+						<a href="#">Type</a>
 						<ul class="subnav">
-							<li><a href="#">Fruits</a></li>
-							<li><a href="#">Photography</a></li>
-							<li><a href="#">Vector</a></li>
+							<li><a href="index.jsp">ImageSearch</a></li>
+							<li><a href="video.jsp">ThumbnailExtractor</a></li>
 						</ul>
 					</li>
 	              </ul>
@@ -87,7 +87,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 	<div class="grid_1">
 		<h3>Imazon Database</h3>
 		<%
-		for(int i=1;i<52;i++){
+		for(int i=1;i<PictureClusterer.max_images;i++){
 			
 			out.println("<div class=\"col-md-2 col_1\">");
 			out.println("<img src=\"Fruits/img_"+i+".jpg\" height=\"200\" width=\"200\"/> ");

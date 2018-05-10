@@ -73,10 +73,8 @@
 			<artifactId>jopensurf</artifactId>
 			<version>1.0.0</version>
 		</dependency>
-		
-
-
-
+		<!-- https://mvnrepository.com/artifact/xuggle/xuggle-xuggler -->
+	
 
 	</dependencies>
 </project>

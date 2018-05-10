@@ -27,6 +27,8 @@ import weka.filters.unsupervised.attribute.Remove;
 
 
 public class WekaClustering {
+	public static  int height=2;
+	public static  int width=2;
 	public static ArrayList<Cluster>clusters=new ArrayList<Cluster>();
 	public static void main(String[] args) throws Exception {
 
@@ -62,9 +64,10 @@ public class WekaClustering {
 
 		fvWekaAttributes.addElement(new Attribute("angle"));
 		fvWekaAttributes.addElement(new Attribute("octave"));
-		fvWekaAttributes.addElement(new Attribute("response"));
-		fvWekaAttributes.addElement(new Attribute("size"));
-		fvWekaAttributes.addElement(new Attribute("image"));
+//		fvWekaAttributes.addElement(new Attribute("color"));
+//		fvWekaAttributes.addElement(new Attribute("size"));
+//		fvWekaAttributes.addElement(new Attribute("response"));
+//		fvWekaAttributes.addElement(new Attribute("image"));
 
 
 
@@ -92,7 +95,7 @@ public class WekaClustering {
 
 
 		}
-		//		trainingSet.setClassIndex(4);
+//				trainingSet.setClassIndex(4);
 
 		return trainingSet;
 	}
@@ -112,7 +115,7 @@ public class WekaClustering {
 
 
 		}
-		testingSet.setClassIndex(4);
+//		testingSet.setClassIndex(4);
 
 
 
@@ -127,32 +130,45 @@ public class WekaClustering {
 		//		  filter.setInputFormat(trainingSet);
 		//		  Instances newTrain = Filter.useFilter(trainingSet, filter);
 		//		  
-		som.setHeight(2);
-		som.setWidth(2);
-
+		som.setHeight(height);
+		som.setWidth(width);
+		HashMap<Integer,Integer>mapping=new HashMap<>();
+		
 		som.buildClusterer(trainingSet);
+		for(int x=0;x<trainingSet.size();x++){
+			mapping.put(x, som.clusterInstance(trainingSet.get(x)));
+		}
+		System.out.println("mapping=>"+mapping);
 
-		Instances[] instances = som.getClusterInstances();
+		
+		
 		clusters.clear();
 
-		for(int i=0;i<instances.length;i++){
+		for(int i=0;i<height*width;i++){
 			Cluster cluster=new Cluster();
 			cluster.name=String.valueOf(i+1);
-//			System.out.println("cluster"+cluster.name);
+			System.out.println("cluster"+cluster.name);
 		
-			Instances instance_set = instances[i];
-			for(int j=0;j<instance_set.size();j++){
-				Instance instance = instance_set.get(j);
+			Iterator<Integer> keyset_iterator=mapping.keySet().iterator();
+			while(keyset_iterator.hasNext()){
 				
-				if(cluster.instances.containsKey(instance.toString(4))){
-					cluster.instances.put(instance.toString(4), cluster.instances.get(instance.toString(4)));
-	
+				int instance_id=keyset_iterator.next();
+				Long image_id=images.get(instance_id);
+				int cluster_id=mapping.get(instance_id);
+				if(cluster_id==i){
+					if(cluster.image_instances.containsKey(image_id)){
+						cluster.image_instances.put(image_id, cluster.image_instances.get(image_id)+1);
+		
+					}
+					else{
+						cluster.image_instances.put(image_id, 1l);
+						
+					}
 				}
-				else{
-					cluster.instances.put(instance.toString(4), 1l);
-					
-				}
+				
+				
 			}
+			System.out.println(cluster.image_instances);
 			clusters.add(cluster);
 
 		}
@@ -161,24 +177,82 @@ public class WekaClustering {
 
 
 	}
+	public static  ArrayList<Cluster> trainSOMClusters(Instances trainingSet,ArrayList<Long>images, FastVector fvWekaAttributes) throws Exception {
+		SelfOrganizingMap som=new SelfOrganizingMap();
+
+
+		//		Remove filter = new Remove();
+		//		  filter.setAttributeIndices("" + (trainingSet.classIndex() + 1));
+		//		  filter.setInputFormat(trainingSet);
+		//		  Instances newTrain = Filter.useFilter(trainingSet, filter);
+		//		  
+		som.setHeight(height);
+		som.setWidth(width);
+		HashMap<Integer,Integer>mapping=new HashMap<>();
+		
+		som.buildClusterer(trainingSet);
+		for(int x=0;x<trainingSet.size();x++){
+			mapping.put(x, som.clusterInstance(trainingSet.get(x)));
+		}
+		System.out.println("mapping=>"+mapping);
+
+		
+		
+		clusters.clear();
+
+		for(int i=0;i<height*width;i++){
+			Cluster cluster=new Cluster();
+			cluster.name=String.valueOf(i+1);
+			System.out.println("cluster"+cluster.name);
+		
+			Iterator<Integer> keyset_iterator=mapping.keySet().iterator();
+			while(keyset_iterator.hasNext()){
+				
+				int instance_id=keyset_iterator.next();
+				Long image_id=images.get(instance_id);
+				int cluster_id=mapping.get(instance_id);
+				if(cluster_id==i){
+					if(cluster.image_instances.containsKey(image_id)){
+						cluster.image_instances.put(image_id, cluster.image_instances.get(image_id)+1);
+		
+					}
+					else{
+						cluster.image_instances.put(image_id, 1l);
+						
+					}
+				}
+				
+				
+			}
+			System.out.println(cluster.image_instances);
+			clusters.add(cluster);
+
+		}
+
+		return clusters;
+
+
+	}
 	public static Instance getTrainingInstance(KeyPoint keypoint,Long image,FastVector fvWekaAttributes){
 
-		Instance instance=new DenseInstance(5);	
+		Instance instance=new DenseInstance(2);	
 		instance.setValue((Attribute)fvWekaAttributes.get(0),keypoint.angle);
 		instance.setValue((Attribute)fvWekaAttributes.get(1),keypoint.octave);
-		instance.setValue((Attribute)fvWekaAttributes.get(2),keypoint.response);
-		instance.setValue((Attribute)fvWekaAttributes.get(3),keypoint.size);
-		instance.setValue((Attribute)fvWekaAttributes.get(4),image);
+//		instance.setValue((Attribute)fvWekaAttributes.get(2),);
+//		instance.setValue((Attribute)fvWekaAttributes.get(2),keypoint.size);
+//		instance.setValue((Attribute)fvWekaAttributes.get(3),keypoint.response);
+//		instance.setValue((Attribute)fvWekaAttributes.get(2),image);
 
 		return instance;
 	}
 	public static Instance getTestingInstance(KeyPoint keypoint,FastVector fvWekaAttributes){
 
-		Instance instance=new DenseInstance(5);	
+		Instance instance=new DenseInstance(2);	
 		instance.setValue((Attribute)fvWekaAttributes.get(0),keypoint.angle);
 		instance.setValue((Attribute)fvWekaAttributes.get(1),keypoint.octave);
-		instance.setValue((Attribute)fvWekaAttributes.get(2),keypoint.response);
-		instance.setValue((Attribute)fvWekaAttributes.get(3),keypoint.size);
+//		instance.setValue((Attribute)fvWekaAttributes.get(2),keypoint.size);
+//		instance.setValue((Attribute)fvWekaAttributes.get(3),keypoint.response);
+//		instance.setMissing(2);
 
 
 
@@ -200,7 +274,7 @@ public class WekaClustering {
 		return som;
 
 	}
-	public static String classify(Instance instance,SelfOrganizingMap som) throws Exception{
+	public static Long classify(Instance instance,SelfOrganizingMap som) throws Exception{
 
 
 		//	 int clsLabel = som.clusterInstance(instance);
@@ -209,21 +283,24 @@ public class WekaClustering {
 		double[] val = som.distributionForInstance(instance);
 	
 		
+		
 		int cluster=-1;
 		double max=0;
 		for(int i=0;i<val.length;i++){
-		
+//			System.out.print(val[i]+",");
 			if(val[i]>max){
-				cluster=i+1;
+				cluster=i;
 				max=val[i];
 				
 			}
 
 
 		}
+//		System.out.println();
 		
-		System.out.println(cluster);
-		return clusters.get(cluster).getMajorClass();
+		Long image_id=clusters.get(cluster).getMajorClass();
+	
+		return image_id;
 
 
 

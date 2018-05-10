@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -49,7 +50,7 @@ import weka.core.Instance;
 import weka.core.Instances;
 
 public class PictureClusterer {
-	static final int max_images=4;
+	public static final int max_images=16;
 	public static JSONArray searchImage(String real_path) throws Exception{
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 	
@@ -62,7 +63,7 @@ public class PictureClusterer {
 		
 		for (Long i = 1l; i <= max_images; i++) {
 	
-			String test_image = "/home/joey/workspace/.metadata/.plugins/org.eclipse.wst.server.core/tmp0/wtpwebapps/imago/Fruits//img_"+i+".jpg";
+			String test_image = "/home/maggie/workspace/.metadata/.plugins/org.eclipse.wst.server.core/tmp0/wtpwebapps/imago/Fruits//img_"+i+".jpg";
 			String filename="Fruits//img_"+i+".jpg";
 
 			
@@ -74,7 +75,7 @@ public class PictureClusterer {
 			}
 			keypoints_set.addAll(keypoints);
 			images_set.addAll(image_labels);
-			System.out.println(i+" added");
+			
 			
 		
 	
@@ -85,6 +86,8 @@ public class PictureClusterer {
 			
 
 		}
+		WekaClustering.height=10;
+		WekaClustering.width=10;
 		FastVector fvWekaAttributes = WekaClustering.getAttributeSet();
 		System.out.println("1");
 		Instances training_instances = WekaClustering.getTrainingSet(keypoints_set,images_set, fvWekaAttributes);
@@ -102,8 +105,8 @@ public class PictureClusterer {
 		HashMap<String,Integer>set=new HashMap<String,Integer>();
 		while(instance_iterator.hasNext()){
 			
-			String class_label="Fruits//img_"+WekaClustering.classify(instance_iterator.next(), som).trim()+".jpg";
-			System.out.println(class_label);
+			String class_label="Fruits//img_"+String.valueOf(WekaClustering.classify(instance_iterator.next(), som)).trim()+".jpg";
+			
 			if(set.containsKey(class_label)){
 				set.put(class_label,set.get(class_label)+1);
 			}
@@ -129,6 +132,7 @@ public class PictureClusterer {
 		} );
 		
 		JSONArray results=new JSONArray();
+		int max_results=2;
 		for(Map.Entry<String, Integer> entry:list){
 			System.out.println(entry.getKey()+" ==== "+entry.getValue());
 			if(entry.getValue()>0){
@@ -139,6 +143,7 @@ public class PictureClusterer {
 				
 		        results.put(jobject);
 			}
+			if(--max_results<=0)break;
 	
 	        
 	    }
@@ -157,7 +162,7 @@ public class PictureClusterer {
 	public static MatOfKeyPoint feature_extract(String query_image) throws IOException{
 		BufferedImage inputImage=ImageIO.read(new File(query_image));
 		
-		BufferedImage resized_image=Utilities.resize(inputImage, 1024, 1024);
+		BufferedImage resized_image=Utilities.resize(inputImage, 128, 128);
 		 File temp = File.createTempFile("temp_"+new Date().getTime(), ".jpg");
 		 ImageIO.write(resized_image,"JPG",temp);
 		 System.out.println(resized_image.getType());
@@ -186,7 +191,7 @@ public static ArrayList<KeyPoint> keypoint_extract(String query_image) throws IO
 
 	BufferedImage inputImage=ImageIO.read(new File(query_image));
 	
-	BufferedImage resized_image=Utilities.resize(inputImage, 64, 64);
+	BufferedImage resized_image=Utilities.resize(inputImage, 512, 512);
 	String file_name="temp_"+new Date().getTime();
 	 File temp = File.createTempFile(file_name, ".jpg");
 	 ImageIO.write(resized_image,"JPG",temp);
@@ -213,12 +218,25 @@ public static ArrayList<KeyPoint> keypoint_extract(String query_image) throws IO
 			if(keys[i].angle!=0){
 				feature++;
 				keypoints.add(keys[i]);
+				
 			}
 			
 		}
+		Collections.sort(keypoints, new Comparator<KeyPoint>() {
+	        @Override
+	        public int compare(KeyPoint o1, KeyPoint o2) {
+	        	
+	        	if(o1.response<o2.response)return 0;
+	        	else return -1;
+	            
+	        }
+	    });
 		
 		System.out.println(keys.length+" "+feature);
-		return keypoints;
+		System.out.println("first "+keypoints.get(0).response+" last "+keypoints.get(keypoints.size()-1).response);
+		
+//		return  new ArrayList<KeyPoint>(keypoints);
+		return  new ArrayList<KeyPoint>(keypoints.subList(0, 100));
 		
 	}
 	
